@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colores } from '@/constants/colores';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
 
 export default function ConfiguracionScreen() {
 

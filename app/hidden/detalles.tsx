@@ -5,6 +5,7 @@ import {
   Pressable,
   Animated,
   Dimensions,
+  Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colores } from '@/constants/colores';
@@ -12,36 +13,28 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef } from 'react';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
 
 const { width } = Dimensions.get('window');
 const HEADER_HEIGHT = 450;
 
 export default function DetallesMascota() {
+  const params = useLocalSearchParams();
   const router = useRouter();
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const {
-    nombre,
-    raza,
-    edad,
-    especie,
-    color,
-    sexo,
-    fechaNacimiento,
-    senasParticulares,
-    microchipId,
-    fotoUrl,
-  } = useLocalSearchParams();
+  useCustomHeaderConfig({
+    title: `Información de ${params.nombre || 'mascota'}`,
+  });
+  
 
-  const imagenMascota = fotoUrl?.startsWith('http') ? { uri: fotoUrl } : require('@/assets/images/perrito.png');
-
-          useCustomHeaderConfig({
-          title: `informacion de ${nombre}`,
-        });
+  const picture = typeof params.picture === 'string' ? params.picture : undefined;
+  const imagenMascota = picture?.startsWith('http')
+    ? { uri: picture }
+    : require('@/assets/images/perrito.png');
 
   return (
     <View style={styles.container}>
-      {/* Imagen fija arriba */}
       <Animated.Image
         source={imagenMascota}
         style={styles.imageBackground}
@@ -64,18 +57,18 @@ export default function DetallesMascota() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.basicInfoRow}>
-          <InfoLinea icon="dog" value={nombre} />
-          <InfoLinea icon="gender-male-female" value={sexo} />
-          <InfoLinea icon="calendar" value={fechaNacimiento} />
+          <InfoLinea icon="dog" value={params.nombre as string} />
+          <InfoLinea icon="gender-male-female" value={params.sexo as string} />
+          <InfoLinea icon="calendar" value={params.fechaNacimiento as string} />
         </View>
 
         <View style={styles.card}>
-          <Info label="Edad" value={`${edad} años`} />
-          <Info label="Raza" value={raza} />
-          <Info label="Especie" value={especie} />
-          <Info label="Color" value={color} />
-          <Info label="Señas particulares" value={senasParticulares} />
-          <Info label="Microchip ID" value={microchipId} />
+          <Info label="Edad" value={`${params.edad} años`} />
+          <Info label="Raza" value={params.raza as string} />
+          <Info label="Especie" value={params.especie as string} />
+          <Info label="Color" value={params.color as string} />
+          <Info label="Señas particulares" value={params.senasParticulares as string} />
+          <Info label="Microchip ID" value={params.gpsId as string} />
 
           <View style={styles.botonesContainer}>
             <Pressable
@@ -84,16 +77,17 @@ export default function DetallesMascota() {
                 router.push({
                   pathname: '/hidden/editarMascota',
                   params: {
-                    nombre,
-                    raza,
-                    edad,
-                    especie,
-                    color,
-                    sexo,
-                    fechaNacimiento,
-                    senasParticulares,
-                    microchipId,
-                    fotoUrl,
+                    id: params.id as string,
+                    nombre: params.nombre as string,
+                    raza: params.raza as string,
+                    edad: params.edad as string,
+                    especie: params.especie as string,
+                    color: params.color as string,
+                    sexo: params.sexo as string,
+                    fechaNacimiento: params.fechaNacimiento as string,
+                    gpsId: params.gpsId as string,
+                    picture: params.picture as string,
+                    caracteristicas: params.caracteristicas as string,
                   },
                 })
               }
@@ -102,7 +96,6 @@ export default function DetallesMascota() {
             </Pressable>
           </View>
         </View>
-
       </Animated.ScrollView>
     </View>
   );
@@ -110,7 +103,6 @@ export default function DetallesMascota() {
 
 function InfoLinea({ icon, value }: { icon: string; value?: string }) {
   if (!value) return null;
-
   return (
     <View style={styles.infoLinea}>
       <MaterialCommunityIcons name={icon} size={20} color="#fff" style={styles.iconoLinea} />
@@ -160,7 +152,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingTop: HEADER_HEIGHT + 40,  // evitar solapar imagen
+    paddingTop: HEADER_HEIGHT + 40,
   },
   imageBackground: {
     position: 'absolute',
@@ -252,9 +244,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 2,
-  },
-  botonSecundario: {
-    backgroundColor: Colores.secundario,
   },
   botonTexto: {
     color: Colores.botonTexto,
