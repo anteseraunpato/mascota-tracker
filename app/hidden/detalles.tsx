@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef } from 'react';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
 
 const { width } = Dimensions.get('window');
 const HEADER_HEIGHT = 450;

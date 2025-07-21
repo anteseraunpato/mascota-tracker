@@ -1,4 +1,5 @@
 import { Colores } from '@/constants/colores';
+import React from 'react';
 import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 

@@ -2,6 +2,7 @@
 import { Stack } from 'expo-router';
 import { Colores } from '@/constants/colores';
 import { StatusBar } from 'react-native';
+import React from 'react';
 
 export default function HiddenLayout() {
   return (

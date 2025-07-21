@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+
 import { View, Text, TextInput, StyleSheet, ScrollView, Pressable, Alert, Image, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Colores } from '@/constants/colores';
+import { useEffect, useState } from 'react';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
+import { apiFetch, BASE_URL,  } from '../api/client';
 
-const API_URL = 'http://192.168.100.190:3000/mascotas';
+
 
 interface MascotaParams {
   id?: string;
@@ -46,33 +49,30 @@ export default function EditarMascota() {
   useCustomHeaderConfig({ title: "Editar detalles de mascota" });
 
   useEffect(() => {
-    const cargarDatos = async () => {
-      setLoading(true);
-      try {
-        if (!mascotaId) throw new Error('ID de mascota no válido');
+  const cargarDatos = async () => {
+    setLoading(true);
+    try {
+      if (!mascotaId) throw new Error('ID de mascota no válido');
 
-        const response = await fetch(`${API_URL}/${mascotaId}`);
-        if (!response.ok) throw new Error('Mascota no encontrada');
+      const data = await apiFetch(`/mascotas/${mascotaId}`);
+      setFormData({
+        ...data,
+        gpsId: data.gpsId?.toString() || '',
+        edad: data.edad?.toString() || '',
+        caracteristicas: data.caracteristicas || data.senasParticulares || '',
+      });
 
-        const data = await response.json();
-        setFormData({
-          ...data,
-          gpsId: data.gpsId?.toString() || '',
-          edad: data.edad?.toString() || '',
-          caracteristicas: data.caracteristicas || data.senasParticulares || '',
-        });
+      if (data.picture) setImagen({ uri: data.picture });
+    } catch (error) {
+      Alert.alert('Error', error.message || 'No se pudieron cargar los datos');
+      router.back();
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (data.picture) setImagen({ uri: data.picture });
-      } catch (error) {
-        Alert.alert('Error', error.message || 'No se pudieron cargar los datos');
-        router.back();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (mascotaId) cargarDatos();
-  }, [mascotaId]);
+  if (mascotaId) cargarDatos();
+}, [mascotaId]);
 
   const handleSeleccionarImagen = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -132,27 +132,23 @@ export default function EditarMascota() {
         } as any);
       }
 
-      const response = await fetch(`${API_URL}/${mascotaId}`, {
-        method: 'PATCH',
-        body: formDataToSend,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await fetch(`${BASE_URL}/mascotas/${mascotaId}`, {
+      method: 'PATCH',
+      body: formDataToSend,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Error al actualizar');
-      }
-
-      Alert.alert('Éxito', 'Mascota actualizada correctamente');
-      router.back();
-    } catch (error) {
-      Alert.alert('Error', error.message || 'Error al actualizar');
-    } finally {
-      setUpdating(false);
-    }
-  };
+      if (!response.ok) throw new Error(await response.text());
+    Alert.alert('Éxito', 'Mascota actualizada correctamente');
+    router.back();
+  } catch (error) {
+    Alert.alert('Error', error.message || 'Error al actualizar');
+  } finally {
+    setUpdating(false);
+  }
+};
 
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));

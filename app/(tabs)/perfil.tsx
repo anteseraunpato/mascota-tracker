@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Image, Pressable, ScrollView } from 'react-nati
 import { Colores } from '@/constants/colores';
 import { useRouter } from 'expo-router';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
 
 export default function PerfilScreen() {
   const router = useRouter();

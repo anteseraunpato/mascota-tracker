@@ -3,8 +3,10 @@ import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Colores } from '@/constants/colores';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
+import { apiFetch, BASE_URL } from '../api/client';
 
-const API_URL = 'http://192.168.100.190:3000/mascotas';
+
 
 export default function RegistrarScreen() {
   // Campos requeridos
@@ -76,13 +78,13 @@ export default function RegistrarScreen() {
         } as any);
       }
 
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await fetch(`${BASE_URL}/mascotas`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
       if (!response.ok) {
         const errorText = await response.text();

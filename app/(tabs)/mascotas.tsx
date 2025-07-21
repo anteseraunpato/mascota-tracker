@@ -4,6 +4,8 @@ import { router, useFocusEffect, useNavigation } from 'expo-router';
 import { Colores } from '@/constants/colores';
 import { useCallback, useEffect, useState } from 'react';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
+import React from 'react';
+import { apiFetch, BASE_URL } from '../api/client';
 
 type Mascota = {
   id: number;
@@ -21,7 +23,6 @@ type Mascota = {
   microchipId?: string;
 };
 
-const API_URL = 'http://192.168.100.190:3000/mascotas'; // Asegúrate que esta IP sea la correcta
 
 export default function MascotasScreen() {
   const [mascotas, setMascotas] = useState<Mascota[]>([]);
@@ -31,9 +32,7 @@ export default function MascotasScreen() {
 
   const fetchMascotas = async () => {
     try {
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error('Error al obtener mascotas');
-      const data = await res.json();
+      const data = await apiFetch('/mascotas');
       setMascotas(data);
     } catch (error) {
       console.error('Error:', error);
@@ -93,13 +92,13 @@ export default function MascotasScreen() {
           data={mascotas}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item, index }) => (
-            <MascotaCard 
-              mascota={{ 
+            <MascotaCard
+              mascota={{
                 ...item,
                 fotoUrl: item.picture,
                 senasParticulares: item.caracteristicas
-              }} 
-              index={index} 
+              }}
+              index={index}
             />
           )}
           contentContainerStyle={styles.lista}
@@ -112,8 +111,8 @@ export default function MascotasScreen() {
       )}
 
       <View style={styles.botonContenedor}>
-        <Pressable 
-          style={styles.boton} 
+        <Pressable
+          style={styles.boton}
           onPress={() => router.push('/hidden/registrar')}
           android_ripple={{ color: Colores.primario }}
         >
