@@ -5,7 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Colores } from '@/constants/colores';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
-const API_URL = 'http://192.168.0.40:3000/mascotas';
+const API_URL = 'http://192.168.100.190:3000/mascotas';
 
 interface MascotaParams {
   id?: string;
@@ -38,22 +38,18 @@ export default function EditarMascota() {
     especie: params.especie?.toString() || '',
     color: params.color?.toString() || '',
     sexo: params.sexo?.toString() || '',
-    caracteristicas: params.caracteristicas?.toString() || '', // Solo caracteristicas
+    caracteristicas: params.caracteristicas?.toString() || '',
     gpsId: params.gpsId?.toString() || '',
     picture: params.picture?.toString() || params.fotoUrl?.toString() || ''
   });
 
-  useCustomHeaderConfig({
-    title: "Editar detalles de mascota",
-  });
+  useCustomHeaderConfig({ title: "Editar detalles de mascota" });
 
   useEffect(() => {
     const cargarDatos = async () => {
       setLoading(true);
       try {
-        if (!mascotaId) {
-          throw new Error('ID de mascota no válido');
-        }
+        if (!mascotaId) throw new Error('ID de mascota no válido');
 
         const response = await fetch(`${API_URL}/${mascotaId}`);
         if (!response.ok) throw new Error('Mascota no encontrada');
@@ -63,12 +59,10 @@ export default function EditarMascota() {
           ...data,
           gpsId: data.gpsId?.toString() || '',
           edad: data.edad?.toString() || '',
-          caracteristicas: data.caracteristicas || data.senasParticulares || ''
+          caracteristicas: data.caracteristicas || data.senasParticulares || '',
         });
 
-        if (data.picture) {
-          setImagen({ uri: data.picture });
-        }
+        if (data.picture) setImagen({ uri: data.picture });
       } catch (error) {
         Alert.alert('Error', error.message || 'No se pudieron cargar los datos');
         router.back();
@@ -88,13 +82,13 @@ export default function EditarMascota() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Cambiado a 'mediaTypes'
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.8,
     });
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (!result.canceled && result.assets?.length > 0) {
       setImagen(result.assets[0]);
     }
   };
@@ -113,51 +107,37 @@ export default function EditarMascota() {
     setUpdating(true);
 
     try {
-      const datosActualizados = {
+      const datosActualizados: any = {
         nombre: formData.nombre,
         raza: formData.raza,
-        edad: Number(formData.edad),
+        edad: formData.edad,
         especie: formData.especie,
         sexo: formData.sexo,
-        color: formData.color || null,
-        caracteristicas: formData.caracteristicas || null, // Solo caracteristicas
-        gpsId: formData.gpsId.trim() === '' ? null : formData.gpsId
+        color: formData.color || '',
+        caracteristicas: formData.caracteristicas || '',
+        gpsId: formData.gpsId || '',
       };
 
-      if (imagen) {
-        if (!imagen.uri.startsWith('http')) {
-          const formDataCloudinary = new FormData();
-          formDataCloudinary.append('picture', {
-            uri: imagen.uri,
-            name: `mascota_${Date.now()}.jpg`,
-            type: 'image/jpeg',
-          } as any);
+      const formDataToSend = new FormData();
 
-          const uploadResponse = await fetch(`${API_URL}/upload`, {
-            method: 'POST',
-            body: formDataCloudinary,
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+      for (const key in datosActualizados) {
+        formDataToSend.append(key, datosActualizados[key]);
+      }
 
-          if (!uploadResponse.ok) throw new Error('Error al subir imagen');
-
-          const { secure_url } = await uploadResponse.json();
-          datosActualizados.picture = secure_url;
-        } else {
-          datosActualizados.picture = imagen.uri;
-        }
-      } else if (formData.picture) {
-        datosActualizados.picture = formData.picture;
+      if (imagen && !imagen.uri.startsWith('http')) {
+        formDataToSend.append('picture', {
+          uri: imagen.uri,
+          name: `mascota_actualizada_${Date.now()}.jpg`,
+          type: 'image/jpeg',
+        } as any);
       }
 
       const response = await fetch(`${API_URL}/${mascotaId}`, {
         method: 'PATCH',
+        body: formDataToSend,
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
-        body: JSON.stringify(datosActualizados),
       });
 
       if (!response.ok) {
@@ -188,55 +168,14 @@ export default function EditarMascota() {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      <Input
-        label="Nombre *"
-        value={formData.nombre}
-        onChangeText={(text) => handleChange('nombre', text)}
-      />
-      <Input
-        label="Raza *"
-        value={formData.raza}
-        onChangeText={(text) => handleChange('raza', text)}
-      />
-      <Input
-        label="Edad *"
-        value={formData.edad}
-        onChangeText={(text) => {
-          if (/^\d*$/.test(text)) {
-            handleChange('edad', text);
-          }
-        }}
-        keyboardType="numeric"
-      />
-      <Input
-        label="Especie *"
-        value={formData.especie}
-        onChangeText={(text) => handleChange('especie', text)}
-      />
-      <Input
-        label="Sexo *"
-        value={formData.sexo}
-        onChangeText={(text) => handleChange('sexo', text)}
-      />
-      <Input
-        label="Color"
-        value={formData.color}
-        onChangeText={(text) => handleChange('color', text)}
-        placeholder="Opcional"
-      />
-      <Input
-        label="Características"
-        value={formData.caracteristicas}
-        onChangeText={(text) => handleChange('caracteristicas', text)}
-        multiline
-        placeholder="Opcional"
-      />
-      <Input
-        label="ID GPS"
-        value={formData.gpsId}
-        onChangeText={(text) => handleChange('gpsId', text)}
-        placeholder="Opcional - dejar vacío si no tiene"
-      />
+      <Input label="Nombre *" value={formData.nombre} onChangeText={(text) => handleChange('nombre', text)} />
+      <Input label="Raza *" value={formData.raza} onChangeText={(text) => handleChange('raza', text)} />
+      <Input label="Edad *" value={formData.edad} onChangeText={(text) => /^\d*$/.test(text) && handleChange('edad', text)} keyboardType="numeric" />
+      <Input label="Especie *" value={formData.especie} onChangeText={(text) => handleChange('especie', text)} />
+      <Input label="Sexo *" value={formData.sexo} onChangeText={(text) => handleChange('sexo', text)} />
+      <Input label="Color" value={formData.color} onChangeText={(text) => handleChange('color', text)} placeholder="Opcional" />
+      <Input label="Características" value={formData.caracteristicas} onChangeText={(text) => handleChange('caracteristicas', text)} multiline placeholder="Opcional" />
+      <Input label="ID GPS" value={formData.gpsId} onChangeText={(text) => handleChange('gpsId', text)} placeholder="Opcional" />
 
       <Pressable style={styles.botonImagen} onPress={handleSeleccionarImagen}>
         <Text style={styles.botonImagenTexto}>
@@ -245,10 +184,7 @@ export default function EditarMascota() {
       </Pressable>
 
       {(imagen || formData.picture) && (
-        <Image
-          source={{ uri: imagen?.uri || formData.picture }}
-          style={styles.imagen}
-        />
+        <Image source={{ uri: imagen?.uri || formData.picture }} style={styles.imagen} />
       )}
 
       <Pressable
@@ -283,27 +219,11 @@ function Input({ label, value, onChangeText, keyboardType = 'default', multiline
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-    backgroundColor: Colores.fondoClaro,
-  },
-  container: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  cargandoContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputGroup: {
-    marginBottom: 15,
-  },
-  label: {
-    fontWeight: 'bold',
-    color: Colores.texto,
-    marginBottom: 5,
-  },
+  scroll: { flex: 1, backgroundColor: Colores.fondoClaro },
+  container: { padding: 20, paddingBottom: 40 },
+  cargandoContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  inputGroup: { marginBottom: 15 },
+  label: { fontWeight: 'bold', color: Colores.texto, marginBottom: 5 },
   input: {
     backgroundColor: '#fff',
     paddingHorizontal: 12,
@@ -326,14 +246,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
   },
-  botonDisabled: {
-    opacity: 0.7,
-  },
-  botonTexto: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+  botonDisabled: { opacity: 0.7 },
+  botonTexto: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   botonImagen: {
     backgroundColor: Colores.primario,
     padding: 12,
@@ -341,8 +255,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  botonImagenTexto: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  botonImagenTexto: { color: '#fff', fontWeight: 'bold' },
 });

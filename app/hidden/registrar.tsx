@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { Colores } from '@/constants/colores';
 import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
-const API_URL = 'http://192.168.0.40:3000/mascotas';
+const API_URL = 'http://192.168.100.190:3000/mascotas';
 
 export default function RegistrarScreen() {
   // Campos requeridos

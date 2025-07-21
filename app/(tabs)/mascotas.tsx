@@ -21,7 +21,7 @@ type Mascota = {
   microchipId?: string;
 };
 
-const API_URL = 'http://192.168.0.40:3000/mascotas'; // Asegúrate que esta IP sea la correcta
+const API_URL = 'http://192.168.100.190:3000/mascotas'; // Asegúrate que esta IP sea la correcta
 
 export default function MascotasScreen() {
   const [mascotas, setMascotas] = useState<Mascota[]>([]);
