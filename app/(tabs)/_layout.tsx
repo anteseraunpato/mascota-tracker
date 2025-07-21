@@ -10,7 +10,7 @@ export default function TabsLayout() {
     <>
       <StatusBar barStyle="dark-content" backgroundColor={Colores.fondoClaro} />
       <Tabs
-        screenOptions={({ route }) => ({
+        screenOptions={({ route }: { route: { name: string } }) => ({
           headerStyle: {
             backgroundColor: Colores.fondoClaro,
             elevation: 0,
@@ -29,7 +29,7 @@ export default function TabsLayout() {
             backgroundColor: Colores.fondoClaro,
             borderColor: Colores.fondoClaro,
           },
-          tabBarIcon: ({ color, size }) => {
+          tabBarIcon: ({ color, size }: { color: string; size: number }) => {
             let iconName: keyof typeof MaterialIcons.glyphMap = 'settings';
 
             switch (route.name) {
@@ -58,7 +58,7 @@ export default function TabsLayout() {
           name="perfil"
           options={{
             title: 'Mi cuenta',
-            tabBarIcon: ({ focused }) => (
+            tabBarIcon: ({ focused }: { focused: boolean }) => (
               <Image
                 source={{ uri: imagenPerfil }}
                 style={{
