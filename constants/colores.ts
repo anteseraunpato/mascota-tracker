@@ -1,7 +1,7 @@
 export const Colores = {
   // Colores principales
   primario: '#55C9E7',         // Azul cielo brillante – encabezados, iconos activos
-  secundario: '#FFD33E',       // Amarillo cálido – acentos, íconos llamativos
+  secundario: '#fbce57',       // Amarillo cálido – acentos, íconos llamativos
   terciario: "#B8E6F4",        // Azul pastel – detalles donde el azul está sobre fondo oscuro por ejemplo
 
   // Botones

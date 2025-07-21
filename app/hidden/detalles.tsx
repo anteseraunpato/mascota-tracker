@@ -11,6 +11,7 @@ import { Colores } from '@/constants/colores';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRef } from 'react';
+import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
 const { width } = Dimensions.get('window');
 const HEADER_HEIGHT = 450;
@@ -33,6 +34,10 @@ export default function DetallesMascota() {
   } = useLocalSearchParams();
 
   const imagenMascota = fotoUrl?.startsWith('http') ? { uri: fotoUrl } : require('@/assets/images/perrito.png');
+
+          useCustomHeaderConfig({
+          title: `informacion de ${nombre}`,
+        });
 
   return (
     <View style={styles.container}>
@@ -77,7 +82,7 @@ export default function DetallesMascota() {
               style={styles.boton}
               onPress={() =>
                 router.push({
-                  pathname: '/(tabs)/hidden/editarMascota',
+                  pathname: '/hidden/editarMascota',
                   params: {
                     nombre,
                     raza,
@@ -93,24 +98,7 @@ export default function DetallesMascota() {
                 })
               }
             >
-              <Text style={styles.botonTexto}>Editar Mascota</Text>
-            </Pressable>
-
-            <Pressable
-              style={[styles.boton, styles.botonSecundario]}
-              onPress={() =>
-                router.push({
-                  pathname: '(tabs)/hidden/ubicacion',
-                  params: {
-                    nombre,
-                    especie,
-                    raza,
-                    imagen: fotoUrl,
-                  },
-                })
-              }
-            >
-              <Text style={styles.botonTexto}>Ver Ubicación</Text>
+              <Text style={styles.botonTexto}>Editar información</Text>
             </Pressable>
           </View>
         </View>
@@ -220,8 +208,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colores.fondoClaro,
     borderRadius: 16,
-    paddingTop: 24,
-    paddingBottom: 12,
+    paddingVertical: 24,
     paddingHorizontal: 24,
     zIndex: 1,
   },

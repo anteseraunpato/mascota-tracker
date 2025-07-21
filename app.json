@@ -11,10 +11,15 @@
     "ios": {
       "supportsTablet": true
     },
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "backgroundColor": "#55C9E7", 
+      "resizeMode": "contain"        
+    },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/favicon.png",
+        "backgroundColor": "#55C9E7"
       },
       "edgeToEdgeEnabled": true
     },
@@ -28,15 +33,15 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/favicon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#55C9E7"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
   }
 }

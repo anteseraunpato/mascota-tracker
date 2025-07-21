@@ -1,6 +1,7 @@
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { Colores } from '@/constants/colores';
+import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
 export default function RegistrarScreen() {
   const [nombre, setNombre] = useState('');
@@ -11,9 +12,12 @@ export default function RegistrarScreen() {
     console.log({ nombre, raza, edad });
   };
 
+        useCustomHeaderConfig({
+        title: "Registrar mascota",
+      });
+
   return (
     <View style={styles.container}>
-      <Text style={styles.titulo}>Registrar Mascota</Text>
       <TextInput style={styles.input} placeholder="Nombre" value={nombre} onChangeText={setNombre} />
       <TextInput style={styles.input} placeholder="Raza" value={raza} onChangeText={setRaza} />
       <TextInput style={styles.input} placeholder="Edad" keyboardType="numeric" value={edad} onChangeText={setEdad} />

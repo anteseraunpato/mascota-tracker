@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Colores } from '@/constants/colores';
+import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
 export default function EditarMascota() {
   const router = useRouter();
@@ -23,10 +24,12 @@ export default function EditarMascota() {
     router.back(); // Regresa a la pantalla anterior
   };
 
+            useCustomHeaderConfig({
+            title: "Editar detalles de mascota",
+          });
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      <Text style={styles.titulo}>Editar Mascota</Text>
-
       <Input label="Nombre" value={nombre} onChangeText={setNombre} />
       <Input label="Edad" value={edad} onChangeText={setEdad} keyboardType="numeric" />
       <Input label="Raza" value={raza} onChangeText={setRaza} />

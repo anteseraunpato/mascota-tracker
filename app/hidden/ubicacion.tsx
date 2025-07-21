@@ -5,6 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colores } from '@/constants/colores';
 import { router } from 'expo-router';
+import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
 
 const { width, height } = Dimensions.get('window');
@@ -23,8 +24,12 @@ export default function Ubicacion() {
     fotoUrl,
   } = useLocalSearchParams();
 
-  const LATITUDE = 19.4326;
-  const LONGITUDE = -99.1332;
+  const LATITUDE = 20.9364;
+  const LONGITUDE = -89.0423;
+
+      useCustomHeaderConfig({
+      title: "Ubicación de mi mascota",
+    });
 
   return (
     <View style={styles.container}>
@@ -58,7 +63,7 @@ export default function Ubicacion() {
       style={styles.detallesBoton}
       onPress={() =>
         router.push({
-          pathname: '/(tabs)/hidden/detalles',
+          pathname: '/hidden/detalles',
           params: {
             nombre,
             raza,

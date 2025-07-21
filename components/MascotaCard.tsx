@@ -1,5 +1,7 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colores } from '@/constants/colores';
+import React from 'react';
 import { useRouter } from 'expo-router';
 
 interface Props {
@@ -15,14 +17,16 @@ interface Props {
     microchipId?: string;
     fotoUrl?: string;
   };
+  index: number;
 }
 
-export default function MascotaCard({ mascota }: Props) {
+export default function MascotaCard({ mascota, index }: Props) {
   const router = useRouter();
+  const fondo = coloresAlternos[index % coloresAlternos.length];
 
   const verUbicacion = () => {
     router.push({
-      pathname: '/(tabs)/hidden/ubicacion',
+      pathname: '/hidden/ubicacion',
       params: {
         ...mascota,
       },
@@ -30,54 +34,85 @@ export default function MascotaCard({ mascota }: Props) {
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={verUbicacion} accessibilityRole="button">
-      <Image
-        source={mascota.fotoUrl ? { uri: mascota.fotoUrl } : require('@/assets/images/perrito.png')}
-        style={styles.foto}
-      />
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: fondo }]}
+      onPress={verUbicacion}
+      accessibilityRole="button"
+    >
+      <ImageBackground
+        source={
+          mascota.fotoUrl
+            ? { uri: mascota.fotoUrl }
+            : require('@/assets/images/perrito.png')
+        }
+        style={styles.imagen}
+        imageStyle={styles.imagenRecorte}
+      >
+        <LinearGradient
+          colors={['transparent', fondo]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.degradado}
+        />
+      </ImageBackground>
+
       <View style={styles.info}>
         <Text style={styles.nombre}>{mascota.nombre}</Text>
-        <Text style={styles.detalle}>🐾 Raza: {mascota.raza}</Text>
-        <Text style={styles.detalle}>🎂 Edad: {mascota.edad} años</Text>
+        <Text style={styles.raza}>🐾 {mascota.raza}</Text>
+        <Text style={styles.detalle}>🎂 {mascota.edad} años · {mascota.especie}</Text>
       </View>
     </TouchableOpacity>
   );
 }
 
+const coloresAlternos = ['#FFE0B2', '#C8E6C9', '#BBDEFB'];
+
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    backgroundColor: Colores.fondoSeccion,
-    padding: 16,
+    height: 170,
     borderRadius: 16,
-    alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    elevation: 4,
+    marginBottom: 2,
+    shadowColor: Colores.texto,
+    shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 10,
-    elevation: 2,
+    shadowRadius: 8,
   },
-  foto: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginRight: 16,
-    borderWidth: 2,
-    borderColor: Colores.primario,
-    backgroundColor: Colores.fondoClaro,
+  imagen: {
+    width: 160,
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  imagenRecorte: {
+    resizeMode: 'cover',
+  },
+  degradado: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
   },
   info: {
     flex: 1,
+    padding: 16,
+    justifyContent: 'center',
   },
   nombre: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: Colores.texto,
     marginBottom: 4,
   },
+  raza: {
+    fontSize: 16,
+    color: Colores.texto,
+  },
   detalle: {
     fontSize: 14,
     color: Colores.texto,
+    marginTop: 4,
   },
 });

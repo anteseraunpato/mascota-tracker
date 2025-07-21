@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Image, Pressable, ScrollView } from 'react-native';
 import { Colores } from '@/constants/colores';
 import { useRouter } from 'expo-router';
+import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
 export default function PerfilScreen() {
   const router = useRouter();
@@ -14,12 +15,15 @@ export default function PerfilScreen() {
     foto: 'https://scontent.fmid1-3.fna.fbcdn.net/v/t39.30808-6/456240492_518249367265752_6463164286351966557_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHxeBf_rWXQkhPlDqHGbGp6neMfYgThKs2d4x9iBOEqzUTs_2QIMDjcwPaH3dInqyguiWzGQPGtGRV-O6W8fk99&_nc_ohc=L2U9wY84FQYQ7kNvwFlNB7D&_nc_oc=AdlEf4x9vzKirWQm5um-NxAA6UnpWUT4x9dPkvRyBR4gr28EIGquyPpuka-sEaXX5Oo&_nc_zt=23&_nc_ht=scontent.fmid1-3.fna&_nc_gid=18BXkQFIlxb02hlp9ZauFA&oh=00_AfSmmIH1ybqdRYFPnbm9cTy7PmKxWt2odYQIV-UAkY0Wsg&oe=687E5FE3',
   };
 
+    useCustomHeaderConfig({
+    title: `${usuario.nombre}`,
+  });
+
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
       {/* Foto de perfil */}
       <View style={styles.fotoContainer}>
         <Image source={{ uri: usuario.foto }} style={styles.foto} />
-        <Text style={styles.nombre}>{usuario.nombre}</Text>
       </View>
 
       {/* Información del usuario */}
@@ -40,7 +44,7 @@ export default function PerfilScreen() {
       {/* Acciones */}
       <View style={styles.botonesContainer}>
         <Pressable style={styles.boton} onPress={() => router.push('/cambiarContrasena')}>
-          <Text style={styles.botonTexto}>Cambiar contraseña</Text>
+          <Text style={styles.botonTexto}>Editar mi perfil</Text>
         </Pressable>
 
         <Pressable style={[styles.boton, styles.botonSecundario]} onPress={() => {/* cerrar sesión */}}>
@@ -66,12 +70,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   foto: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     marginBottom: 12,
-    borderWidth: 2,
-    borderColor: Colores.boton,
+
   },
   nombre: {
     fontSize: 22,

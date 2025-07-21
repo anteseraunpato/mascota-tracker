@@ -1,7 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Colores } from '@/constants/colores';
+import { useCustomHeaderConfig } from '@/hooks/useCustomHeader';
 
 export default function ConfiguracionScreen() {
+
+          useCustomHeaderConfig({
+          title: "Ajustes",
+        });
+
   return (
     <View style={styles.container}>
       <Text style={styles.texto}>Pantalla de Configuración</Text>

@@ -1,59 +1,81 @@
 import { Tabs } from 'expo-router';
-import { Feather } from '@expo/vector-icons';
-import { StatusBar } from 'expo-status-bar';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Image, StatusBar } from 'react-native';
 import { Colores } from '@/constants/colores';
-import { Stack } from 'expo-router';
 
+const imagenPerfil = 'https://scontent.fmid1-3.fna.fbcdn.net/v/t39.30808-6/456240492_518249367265752_6463164286351966557_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHxeBf_rWXQkhPlDqHGbGp6neMfYgThKs2d4x9iBOEqzUTs_2QIMDjcwPaH3dInqyguiWzGQPGtGRV-O6W8fk99&_nc_ohc=L2U9wY84FQYQ7kNvwFlNB7D&_nc_oc=AdlEf4x9vzKirWQm5um-NxAA6UnpWUT4x9dPkvRyBR4gr28EIGquyPpuka-sEaXX5Oo&_nc_zt=23&_nc_ht=scontent.fmid1-3.fna&_nc_gid=18BXkQFIlxb02hlp9ZauFA&oh=00_AfSmmIH1ybqdRYFPnbm9cTy7PmKxWt2odYQIV-UAkY0Wsg&oe=687E5FE3';
 
-
-
-
-
-export default function TabLayout() {
-
+export default function TabsLayout() {
   return (
     <>
-      <StatusBar style="auto" />
+      <StatusBar barStyle="dark-content" backgroundColor={Colores.fondoClaro} />
       <Tabs
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerStyle: {
-            backgroundColor: Colores.primario,
+            backgroundColor: Colores.fondoClaro,
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
           },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 21,
+          },
+          headerShadowVisible: false,
           headerTintColor: Colores.texto,
-          tabBarActiveTintColor: Colores.secundario,
-          tabBarInactiveTintColor: Colores.terciario,
+          tabBarActiveTintColor: Colores.primario,
+          tabBarInactiveTintColor: Colores.texto,
           tabBarStyle: {
-            backgroundColor: Colores.texto,
-            borderTopColor: Colores.neutro,
+            backgroundColor: Colores.fondoClaro,
+            borderColor: Colores.fondoClaro,
           },
-        }}
+          tabBarIcon: ({ color, size }) => {
+            let iconName: keyof typeof MaterialIcons.glyphMap = 'settings';
+
+            switch (route.name) {
+              case 'perfil':
+                iconName = 'person';
+                break;
+              case 'mascotas':
+                iconName = 'pets';
+                break;
+              case 'config':
+                iconName = 'settings';
+                break;
+            }
+
+            return <MaterialIcons name={iconName} size={size} color={color} />;
+          },
+        })}
       >
         <Tabs.Screen
-          name="(tabs)/mascotas"
+          name="mascotas"
           options={{
             title: 'Inicio',
-            tabBarIcon: ({ color, size }) => <Feather name="home" color={color} size={size} />,
           }}
         />
         <Tabs.Screen
-          name="(tabs)/ubicacion"
+          name="perfil"
           options={{
-            title: 'Ubicación',
-            tabBarIcon: ({ color, size }) => <Feather name="location-outline" color={color} size={size} />,
+            title: 'Mi cuenta',
+            tabBarIcon: ({ focused }) => (
+              <Image
+                source={{ uri: imagenPerfil }}
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderRadius: 13,
+                  borderWidth: focused ? 2 : 0,
+                  borderColor: Colores.secundario,
+                }}
+              />
+            ),
           }}
         />
         <Tabs.Screen
-          name="(tabs)/perfil"
+          name="config"
           options={{
-            title: 'Perfil',
-            tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" color={color} size={size} />,
-          }}
-        />
-        <Tabs.Screen
-          name="(tabs)/configuracion"
-          options={{
-            title: 'Configuración',
-            tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" color={color} size={size} />,
+            title: 'Ajustes',
           }}
         />
       </Tabs>
